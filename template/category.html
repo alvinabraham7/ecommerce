@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block metadescription %}
+    {% if category %}
+        {{ category.description|truncatewords:155 }}
+    {% else %}
+        Welcome to Shoppy
+    {% endif %}
+{% endblock %}
+
+<!--/*** title ***/-->
+{% block title %}
+    {% if category %}
+        {{ category.name }} -- Shoppy
+    {% else %}
+        See our new collections -- Shoppy
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% if category %}
+<div xmlns="http://www.w3.org/1999/html">
+        <div class="row my_row_class">
+            <div class="mx-auto" >
+               <p><a href="{% url 'ecommerceapp:allProdCat' %}">Our Product Collections</a></p>
+        </div>
+    </div>
+     {% endif %}
+
+<div class="mx-auto">
+    {% if category %}
+        <img class="my_cat_image" src="{{ category.image.url }}" alt="{{ category.name }}">
+    </div>
+    <br>
+    <div>
+        <h6 class="text-center my_title">{{ category.name }}</h6>
+        <p class="text-justify bold-text">{{ category.description }}</p>
+
+    </div>
+    {% else %}
+        <div>
+            <img src="{% static 'img/1.jpg' %}" alt="our products" width="2000px" height="350px">
+        </div>
+        <br>
+        <div><b>
+            <h1 class="text-center my_title">Our Product Collections</h1>
+            <p class="text-justify">ESPORTS Private Limited is an Indian e-commerce company established in 2020. It started with a primary focus on online book sales and soon, expanded to lifestyle products, electronics, home essentials and groceries. Today, Esports is the biggest online Indian marketplace competing with the world leading apps.</p>
+            </b>
+        </div>
+    {% endif %}
+
+    <div class="container">
+        <div class="row mx-auto">
+            {% for product in products.object_list %}
+            <div class="my_bottom_margincol-12 col-sm-6 col-md-4 col-lg-3">
+                <div class="card text-center" style="max-width:18rem;">
+                    <a href="{% url 'ecommerceapp:product_detail' product.id %}"><img class="card-img-top my_image" src="{{ product.image.url }}" alt="{{ product.name }}" width="250px" height="250px"></a>
+                    <div class="card-body">
+                        <h4>{{ product.name }}</h4>
+                        <p>Rs.{{ product.price }}</p>
+                        {% if product.stock == 0 %}
+                        <p><b>Out of Stock</b></p> <!-- Display "Out of Stock" when stock is zero -->
+                        {% else %}
+                        <a class="btn btn-primary" href="{% url 'ecommerceapp:product_detail' product.id %}">Buy</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="mx-auto">
+            {% if products.paginator.num_pages > 1 %}
+            <hr>
+            <div class="text-center">
+                {% for pg in products.paginator.page_range %}
+                    <a href="?page={{pg}}" class="btn btn-light btn-sm {% if products.number == pg %} active {% endif %}">{{pg}}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Add the footer section -->
+<footer class="footer text-center">
+    <p>&copy; Shoppy 2023 </p>
+</footer>
+{% endblock %}
